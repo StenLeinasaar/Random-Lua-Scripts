@@ -39,8 +39,7 @@ function createDeck()
 end
 
 function printDeck()
-    length = #deck
-    for i = 1, length do
+    for i = 1, #deck do
         -- print(F"{deck[i].value} of {deck[i].suit}")
     end
 end
@@ -68,68 +67,80 @@ end
 
 function hit(hand)
     table.insert(hand, table.remove(deck, 1))
-    print("added a card to a hand")
 end
 
 
+function dealerMove(hand)
+    while handValue(hand) <= 16 do
+        hit(hand)
+    end
+end
+
 -- function to check the handvalue of the player
+-- MUST ADD, if player previously had an ACE, then if score is going over 21, take the previous ace to be 1
 function handValue(hand)
     val = 0
-    -- in blackjack. Number is a number. so until 10 it is the value
-    -- use De Morgan's Law
     for i=1, #hand do
         -- when card is higher value than 10, not including 10
         if hand[i].value > 10 then
             -- if card is ace
             if hand[i].value == 14 then
-                -- print("card is a ace")
                 -- if it will break the score, the ace takes on value 1 instead.
                 if (val + hand[i].value) > 21 then
-                    -- print("Ace will break it, adding it to be 1 instead")
                     val = val + 1
-                    -- print(F"New value is {val}")
                 -- else it will be 11
                 else
                     val = val + 11
-                    -- print(F"New value is {val}")
                 end
             -- else it was the other picture card
             else
-                -- print("Card is a picture")
                 val =  val + 10
-                -- print(F"New value is {val}")
             end
         else
-            -- print("it was a random number card")
             val = val + hand[i].value
-            -- print(F"New value is {val}")
         end
     end
-
-    -- if it is above 10 but not 14, then it is 10. 
-
     -- if it is 14 then the prompt a choice for a user
     return val
 end
 
+
+-- Check winner and see if someone is over.
 function checkWinner(dealer, player)
-    if dealer < player then
+
+    -- First check if one or both are 21
+    if dealer == 21 then
+        if player == 21 then
+            return "tie"
+        else
+            return "dealer"
+        end
+    elseif player == 21 then
+        -- Here we already know that dealer is not 21
         return "player"
-    elseif player < dealer then
-        return "dealer"
+    elseif player > 21 then
+        if dealer > 21 then
+            -- both are bust
+            return "tie"
+        else
+            -- Dealer won
+            return "dealer"
+        end
+    elseif dealer > 21 then
+        return "player"
+    -- This is where we need to check for values and who has higher value
     else
-        return "tie"
+        if dealer < player then
+            return "player"
+        elseif player < dealer then
+            return "dealer"
+        else
+            return "tie"
+        end 
     end
 end
 
 
-function printHand(hand)
-    print("Cards are:")
-    for i=1, #hand do
-        print(F"{hand[i].value} \t of \t {hand[i].suit}")
-    end
-    print(F"Value of the hand: \t {handValue(hand)}")
-end
 
 
 function play()
@@ -147,12 +158,21 @@ function play()
             answer = io.read()
             if answer == "yes" then
                 hit(playerHand)
+                if handValue(playerHand) > 21 then
+                    print("YOU ARE BUST")
+                    break
+                end
                 print("Your new hand is")
                 printHand(playerHand)
             else
                 break
             end
         end
+
+        -- Call dealer moves
+        dealerMove(dealerHand)
+        print("Dealer hand was")
+        printHand(dealerHand)
 
         
 
@@ -180,6 +200,16 @@ function play()
         print("Nice playing with you")
     end
 end
+
+-- Function to print out the hand of any player
+function printHand(hand)
+    print("Cards are:")
+    for i=1, #hand do
+        print(F"{hand[i].value} \t of \t {hand[i].suit}")
+    end
+    print(F"Value of the hand: \t {handValue(hand)}")
+end
+
 
 
 function initilize()
