@@ -77,7 +77,7 @@ function handValue(hand)
     val = 0
     -- in blackjack. Number is a number. so until 10 it is the value
     -- use De Morgan's Law
-    for i=1, 2 do
+    for i=1, #hand do
         -- when card is higher value than 10, not including 10
         if hand[i].value > 10 then
             -- if card is ace
@@ -134,25 +134,28 @@ end
 
 function play()
     while true do
+        -- deal initial two cards
         dealCards()
-        -- local dealer = handValue(dealerHand)
-        -- local player = handValue(playerHand)
-
-        -- print(F"player has {#playerHand} cards")
-        -- print(F"The player card is {playerHand[1].value} of suit {playerHand[1].suit}")
-        -- print(F"The player card is {playerHand[2].value} of suit {playerHand[2].suit}")
-
-        -- print(F"{player}")
-
-        -- print("########################")
-
-        -- print(F"The dealer hand is {dealerHand[1].value} of suit {dealerHand[1].suit}")
-        -- print(F"The dea;er hand is {dealerHand[2].value} of suit {dealerHand[2].suit}")
-
-        -- print(F"{dealer}")
-
+        -- show player their own hand
         printHand(playerHand)
-        printHand(dealerHand)
+        -- printHand(dealerHand)
+
+
+        while true do
+            -- Ask if they want to take another card
+            io.write("Do you want another card? {yes/no}")
+            answer = io.read()
+            if answer == "yes" then
+                hit(playerHand)
+                print("Your new hand is")
+                printHand(playerHand)
+            else
+                break
+            end
+        end
+
+        
+
 
         if checkWinner(handValue(dealerHand), handValue(playerHand)) == "player" then
             print("Player won")
@@ -166,9 +169,6 @@ function play()
 
         end
     end
-
-
-
     -- ##### The end of the game section  ---> Possibly put it into its own function.
 
     io.write("Do you want to play again? (yes/no)?")
