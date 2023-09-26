@@ -142,54 +142,56 @@ end
 
 
 
-
+-- Main driver function to play the game
 function play()
     while true do
-        -- deal initial two cards
         dealCards()
         -- show player their own hand
         printHand(playerHand)
-        -- printHand(dealerHand)
 
-
+        -- While player wants a new card or until they are bust
         while true do
-            -- Ask if they want to take another card
+
+
             io.write("Do you want another card? {yes/no}")
             answer = io.read()
+
+
             if answer == "yes" then
                 hit(playerHand)
                 if handValue(playerHand) > 21 then
                     print("YOU ARE BUST")
                     break
                 end
-                print("Your new hand is")
+                -- Later here I can add that it draws out the new card
+                print("Your new hand is:")
                 printHand(playerHand)
             else
                 break
             end
         end
 
+
         -- Call dealer moves
         dealerMove(dealerHand)
         print("Dealer hand was")
         printHand(dealerHand)
-
-        
-
-
-        if checkWinner(handValue(dealerHand), handValue(playerHand)) == "player" then
-            print("Player won")
-            break
-        elseif checkWinner(handValue(dealerHand), handValue(playerHand)) then
-            print("Dealer wins")
-            break
-        else
-            print("nobody won. It is a tie")
-            break
-
-        end
+        break
     end
-    -- ##### The end of the game section  ---> Possibly put it into its own function.
+
+    game_end()
+end
+
+
+function game_end()
+    if checkWinner(handValue(dealerHand), handValue(playerHand)) == "player" then
+        print("Player won")
+    elseif checkWinner(handValue(dealerHand), handValue(playerHand)) then
+        print("Dealer wins")
+    else
+        print("nobody won. It is a tie")
+    end
+-- ##### The end of the game section  ---> Possibly put it into its own function.
 
     io.write("Do you want to play again? (yes/no)?")
     answer = io.read()
