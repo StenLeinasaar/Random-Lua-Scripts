@@ -236,6 +236,9 @@ end
 initilize()
 
 
+
+
+
 -- dealCards()
 
 -- print(F"And length of a deck is {#deck}")
